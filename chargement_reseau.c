@@ -11,6 +11,18 @@ typedef struct{
     char ville[100];
 }Station;
 
+
+typedef struct{
+    int vertex;
+    struct Node* next;
+}Node;
+
+typedef struct{
+    int start_id;
+    int end_id;
+    int time;
+}Edge;
+
 int main(int argc, char **argv) {
     if (argc != 2) {
         printf("Doit prendre exactement 1 argument\n");
@@ -23,6 +35,7 @@ int main(int argc, char **argv) {
         return -1;
     } 
     Station stations[MAX_STATIONS];
+    Edge edges[MAX_STATIONS];
 
     char buffer[1024];
     char line[2048];
@@ -65,6 +78,44 @@ int main(int argc, char **argv) {
            i,
            stations[i].id,
            stations[i].ville);
+    }
+    while ((nb_octet_read = read(fd, buffer, sizeof(buffer))) > 0) {
+
+        for (int i = 0; i < nb_octet_read; i++) {
+            char c = buffer[i];
+
+            // Construction de la ligne
+            if (c != '\n') {
+                line[line_index++] = c;
+            } else {
+                line[line_index] = '\0'; // on le remet en string 
+
+             
+                if (line_index > 0 && line[0] != '#') {
+                    char* type = strtok(line, " ;");
+                    char* start = strtok(NULL," ;");
+                    char* end = strtok(NULL," ;");
+                    char* time = strtok(NULL,"");
+
+                    if (start && end && time && type && strcmp(type, "EDGE") == 0 && n< MAX_STATIONS){ 
+
+                        edges[n].start_id = atoi(start);
+                        edges[n].end_id = atoi(end);
+                        edges[n].time = atoi(time);
+                        n++;
+                    }
+                }
+
+                line_index = 0; //reset l'index
+            }
+        }
+    }
+    for (int i = 0; i < n; i++) {
+    printf("id départ : %d : id arrivé : %d, temps : %d\n",
+
+        edges[n].start_id,
+        edges[n].end_id,
+        edges[n].time);
     }
 
     
