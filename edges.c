@@ -69,40 +69,44 @@ void addEdge(struct Graph* graph, int src, int dest) {
 void printGraph(struct Graph* graph) {
     printf("Vertex:  Adjacency List\n");
     for (int v = 0; v < graph->numVertices; v++) {
+        if(graph->adjLists[v]==NULL){
+            continue;
+        }
         struct Node* temp = graph->adjLists[v];
         printf("%d --->", v);
         while (temp) {
             printf(" %d ->", temp->vertex);
             temp = temp->next;
+    
         }
-        printf(" NULL\n");  
+        printf(" NULL \n");
     }
 }
 
-int main(int argc, char **argv) {
-    if (argc != 2) {
-        printf("Doit prendre exactement 1 argument\n");
-        return -1;
-    }
 
-    int fd = open(argv[1], O_RDONLY);
+int degreSortant(struct Graph* graph, int station){
+    int compteur = 0;
+    struct Node* temp = graph->adjLists[station]; 
+
+    while( temp!= NULL){
+        compteur++;
+        temp = temp->next;
+    }
+    return compteur;
+
+}
+
+
+struct Graph* charger_graphe(const char *nom_fichier) {
+    int fd = open(nom_fichier, O_RDONLY);
     if (fd < 0){
         printf("Fichier non reconnu \n");
-        return -1;
-    } 
+        return NULL;
+    }
+
     Edge edges[MAX_STATIONS];
-    
+    struct Graph* g = createGraph(MAX_STATIONS, 1);
 
-    // Create a directed graph with 3 vertices
-    struct Graph* directedGraph = createGraph(125, 1);
-
-    // Add edges to the directed graph
-    
-    printf("\nAdjacecncy List for Directed Graph:\n");
-    printGraph(directedGraph);
-
-
-    
     char buffer[1024];
     char line[2048];
     int line_index = 0;
@@ -110,50 +114,31 @@ int main(int argc, char **argv) {
     int nb_octet_read;
 
     while ((nb_octet_read = read(fd, buffer, sizeof(buffer))) > 0) {
-
         for (int i = 0; i < nb_octet_read; i++) {
             char c = buffer[i];
-
             if (c != '\n') {
                 line[line_index++] = c;
             } else {
-                line[line_index] = '\0'; 
-
-             
+                line[line_index] = '\0';
                 if (line_index > 0 && line[0] != '#') {
                     char* type = strtok(line, " ;");
                     char* start = strtok(NULL," ;");
                     char* end = strtok(NULL," ;");
                     char* time = strtok(NULL,"");
-                    
-
-                    if (start && end && time && type && strcmp(type, "EDGE") == 0 && n< MAX_STATIONS){ 
-
+                    if (type && start && end && time && strcmp(type, "EDGE") == 0 && n < MAX_STATIONS){ 
                         edges[n].start_id = atoi(start);
                         edges[n].end_id = atoi(end);
                         edges[n].time = atoi(time);
-                        addEdge(directedGraph, edges[n].start_id, edges[n].end_id);
-                        
-
+                        addEdge(g, edges[n].start_id, edges[n].end_id);
                         n++;
                     }
                 }
-
-                line_index = 0; //reset l'index
+                line_index = 0;
             }
         }
     }
-    for (int i = 0; i < n; i++) {
-    printf("id départ : %d : id arrivé : %d, temps : %d\n",
 
-        edges[i].start_id,
-        edges[i].end_id,
-        edges[i].time);
-    }
-    printf("\nAdjacecncy List for Directed Graph:\n");
-    printGraph(directedGraph);
-
-    
     close(fd);
-    return n;
+    return g;
 }
+
