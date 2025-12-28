@@ -6,7 +6,7 @@
 
 void menu(const char *nom_fichier){
     int entry = -1;
-    char fichier[100];
+    // char fichier[100]; utilité ?
     struct Graph *g = charger_graphe(nom_fichier);
 
     while (entry != 0){
@@ -18,15 +18,13 @@ void menu(const char *nom_fichier){
         printf("3- Calculer un chemin minimal \n");
         printf("4- Afficher les stations triées par degré \n");
         printf("0- Quitter \n");
-        printf("Votre choix : \n ");
+        printf("Votre choix : ");
     
         scanf("%d", &entry);
 
         switch (entry){
 
-        
         case 1:
-            
             afficher_reseau(nom_fichier, g);
             break;
         
@@ -35,16 +33,10 @@ void menu(const char *nom_fichier){
             break;
 
         case 3:
-            
             break;
         
         case 4:
-
             break;
         }
-
     }
-    
-    
-    
 }

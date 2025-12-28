@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "chargement_reseau.h"
 
 #define MAX_STATIONS 1000
 
@@ -95,10 +96,10 @@ int afficher_reseau(const char *nom_fichier, struct Graph *graph)
     close(fd);
 
 
-    for(int i = 0; i < TABLE_SIZE; i++)
+    for (int i = 0; i < TABLE_SIZE; i++)
         table[i] = NULL;
 
-    for(int i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
         ajouter_station_hash(stations[i]);
 
     char input[100];
@@ -111,19 +112,16 @@ int afficher_reseau(const char *nom_fichier, struct Graph *graph)
     if (*endptr == '\0') {
 
         Station *s = chercher_station((int)id);
-        if (s)
-            if (s) {
-    printf("ID : %d\n", s->id);
-    printf("Nom : %s\n", s->ville);
-    printf("Degré sortant : %d\n",
-           degreSortant(graph, s->id));
-}
-        else
-            printf("Station id=%d non trouvée\n", (int)id);
+        if (s) {
+            printf("ID : %d\n", s->id);
+            printf("Nom : %s\n", s->ville);
+            printf("Degré sortant : %d\n",
+            degreSortant(graph, s->id));
+        } else printf("Station id=%d non trouvée\n", (int)id);
     } else {
         
-        for(int i=0;i<n;i++) {
-            if(strcmp(stations[i].ville, input) == 0) {
+        for (int i=0;i<n;i++) {
+            if (strcmp(stations[i].ville, input) == 0) {
                 printf("ID : %d\n", stations[i].id);
                 printf("Nom : %s\n", stations[i].ville);
                 printf("Degré sortant : %d\n", degreSortant(graph, stations[i].id));

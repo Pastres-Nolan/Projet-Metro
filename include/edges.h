@@ -3,7 +3,7 @@
 
 #define MAX_STATIONS 1000
 
-// Structure de graphe et noeud
+// Structure de graphe et nœud
 struct Node {
     int vertex;
     struct Node* next;
