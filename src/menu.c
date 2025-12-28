@@ -6,7 +6,6 @@
 
 void menu(const char *nom_fichier){
     int entry = -1;
-    // char fichier[100]; utilité ?
     struct Graph *g = charger_graphe(nom_fichier);
 
     while (entry != 0){

@@ -3,13 +3,14 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
 #define MAX_STATIONS 1000
 
-typedef struct{
+typedef struct {
     int start_id;
     int end_id;
     int time;
-}Edge;
+} Edge;
 
 
 // Structure to represent a node in the adjacency list

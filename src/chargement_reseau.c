@@ -6,13 +6,12 @@
 #include "chargement_reseau.h"
 
 #define MAX_STATIONS 1000
+#define TABLE_SIZE 100
 
-typedef struct{
+typedef struct {
     int id;
     char ville[100];
 } Station;
-
-#define TABLE_SIZE 100 
 
 typedef struct HashNode {
     Station station;
@@ -20,7 +19,7 @@ typedef struct HashNode {
 } HashNode;
 
 
-HashNode* table[TABLE_SIZE]; 
+HashNode* table[TABLE_SIZE];
 
 int hash(int id) {
     return id % TABLE_SIZE;
@@ -48,8 +47,7 @@ Station* chercher_station(int id) {
 
 
 
-int afficher_reseau(const char *nom_fichier, struct Graph *graph)
-{
+int afficher_reseau(const char *nom_fichier, struct Graph *graph) {
 
     int fd = open(nom_fichier, O_RDONLY);
     if (fd < 0){
