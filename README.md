@@ -4,6 +4,7 @@ faire un truc quali
 
 **makefile**
 
+lancer le programme en faisant juste ./metro 
 compiler dans un dossier obj à créer si inexistant ?
 
 make        # compile
@@ -18,4 +19,4 @@ un défault dans le switch ?
 
 implémenter un test pour : 
 - scanf("%d", &entry);
-- struct Graph *g = charger_graphe(nom_fichier);
+- struct Graph *g = charger_graphe(nom_fichier); -> si le fichier n'est pas reconnu, pas afficher le menu et quitter 

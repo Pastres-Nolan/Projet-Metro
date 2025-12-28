@@ -1,7 +1,10 @@
+# Binaires
+*.o
 
-*.out
-*.exe
+# Exécutable
+metro
 
+# Autre
 .DS_Store
 .vscode
 .idea
