@@ -1,3 +1,7 @@
+**README.md**
+
+faire un truc quali
+
 **makefile**
 
 compiler dans un dossier obj à créer si inexistant ?
