@@ -38,4 +38,5 @@ void menu(const char *nom_fichier){
             break;
         }
     }
+    freeGraph(g);
 }
