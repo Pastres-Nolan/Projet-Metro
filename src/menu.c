@@ -33,7 +33,7 @@ void menu(const char *nom_fichier){
             break;
         
         case 2:
-            printGraph(g);
+            afficher_voisins_station(g);
             break;
 
         case 3:

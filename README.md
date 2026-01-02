@@ -16,8 +16,6 @@
 - Ajouter un `default` dans le `switch`.
 - Implémenter un test pour :
     - `scanf("%d", &entry);`
-    - `struct Graph *g = charger_graphe(nom_fichier);`
-        - Si le fichier n'est pas reconnu, ne pas afficher le menu et quitter.
 
 ## Global
 - Rédiger le rapport.

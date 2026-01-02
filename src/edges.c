@@ -41,7 +41,7 @@ struct Graph* createGraph(int vertices, int isDirected) {
     return graph;
 }
 
-static int edgeExists(struct Graph* graph, int src, int dest) {
+static int edgeExists(const struct Graph* graph, int src, int dest) {
     struct Node* temp = graph->adjLists[src];
     while (temp) {
         if (temp->vertex == dest) return 1;

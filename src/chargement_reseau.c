@@ -122,6 +122,38 @@ void afficher_info_station(struct Graph *graph) {
     } else printf("Station '%s' inconnue.\n", input);
 }
 
+void afficher_voisins_station(struct Graph *graph) {
+    char input[100];
+    printf("Entrez l'ID ou le Nom de la station pour lister ses voisins : ");
+    scanf(" %99[^\n]", input);
+
+    char *endptr;
+    int id = (int)strtol(input, &endptr, 10);
+    if (*endptr != '\0') {
+        id = chercher_id_par_nom(input);
+    }
+
+    if (id >= 0 && id < nb_stations_global && tableau_stations[id].nom) {
+        printf("\n--- Voisins de la station %s (ID: %d) ---\n", tableau_stations[id].nom, id);
+        struct Node* temp = graph->adjLists[id];
+
+        if (temp == NULL) {
+            printf("Cette station n'a aucun voisin direct.\n");
+            return;
+        }
+
+        while (temp) {
+            int v_id = temp->vertex;
+            char* v_nom = tableau_stations[v_id].nom ? tableau_stations[v_id].nom : "Inconnu";
+            printf(" %d - %s (%d min)\n", v_id, v_nom, temp->weight);
+            temp = temp->next;
+        }
+    } else {
+        printf("Station '%s' inconnue.\n", input);
+    }
+}
+
+
 void liberer_tout() {
     for (int i = 0; i < nb_stations_global; i++) free(tableau_stations[i].nom);
     free(tableau_stations);
