@@ -18,7 +18,6 @@ struct Graph* createGraph(int vertices, int isDirected);
 void addEdge(struct Graph* graph, int src, int dest);
 void printGraph(struct Graph* graph);
 int degreSortant(struct Graph* graph, int station);
-struct Graph* charger_graphe(const char *nom_fichier);
 void freeGraph(struct Graph* graph);
 
 

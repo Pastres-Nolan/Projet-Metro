@@ -6,7 +6,12 @@
 
 void menu(const char *nom_fichier){
     int entry = -1;
-    struct Graph *g = charger_graphe(nom_fichier);
+    struct Graph *g = charger_reseau(nom_fichier);
+
+    if (g == NULL) {
+        printf(" Impossible de charger le réseau.\n");
+        return;
+    }
 
     while (entry != 0){
       
@@ -24,7 +29,7 @@ void menu(const char *nom_fichier){
         switch (entry){
 
         case 1:
-            afficher_reseau(nom_fichier, g);
+            afficher_info_station(g);
             break;
         
         case 2:
@@ -38,5 +43,5 @@ void menu(const char *nom_fichier){
             break;
         }
     }
-    freeGraph(g);
+    liberer_tout();
 }

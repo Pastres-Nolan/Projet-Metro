@@ -4,14 +4,13 @@
 - Faire un README de qualité.
 
 ## Makefile
-- Lancer le programme en faisant juste `./metro`.
 - Compiler dans le dossier `builds` à créer si inexistant.
-- Commandes Make :
+- OK : Commandes Make :
     - `make`        : compile
     - `make clean`  : supprime les `.o`
     - `make fclean` : supprime tout
     - `make re`     : recompilation propre
-- Lancement de l'exécutable avec `./metro nom_fichier` ou juste `./metro`
+- OK : Lancement de l'exécutable avec `./metro nom_fichier` ou juste `./metro`
 
 ## menu.c
 - Ajouter un `default` dans le `switch`.

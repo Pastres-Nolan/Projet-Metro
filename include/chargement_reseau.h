@@ -3,6 +3,11 @@
 
 #include "edges.h"
 
-int afficher_reseau(const char *nom_fichier, struct Graph *graph);
+struct Graph* charger_reseau(const char *nom_fichier);
+
+void afficher_info_station(struct Graph *graph);
+int chercher_id_par_nom(const char *nom);
+void liberer_tout();
+
 
 #endif
