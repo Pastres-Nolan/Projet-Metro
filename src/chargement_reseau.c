@@ -4,6 +4,8 @@
 #include "chargement_reseau.h"
 #include "edges.h"
 
+#define HASH_SIZE 1024
+
 typedef struct {
     int id;
     char *nom;
@@ -15,7 +17,7 @@ typedef struct HashNode {
 } HashNode;
 
 // Table de hachage pour la recherche par nom
-static HashNode *table_hachage[1024];
+static HashNode *table_hachage[HASH_SIZE];
 // Tableau dynamique pour la recherche par ID
 static Station *tableau_stations = NULL;
 static int nb_stations_global= 0;
@@ -24,7 +26,7 @@ static int nb_stations_global= 0;
 static int hash(const char *nom) {
     int sum = 0;
     while (*nom) sum += *nom++;
-    return sum % 1024;
+    return sum % HASH_SIZE;
 }
 
 int chercher_id_par_nom(const char *nom) {
@@ -62,7 +64,7 @@ struct Graph* charger_reseau(const char *nom_fichier) {
     nb_stations_global = max_id + 1;
     tableau_stations = calloc(nb_stations_global, sizeof(Station));
     struct Graph *g = createGraph(nb_stations_global, 1);
-    for (int i = 0; i < 1024; i++) table_hachage[i] = NULL;
+    for (int i = 0; i < HASH_SIZE; i++) table_hachage[i] = NULL;
     // 3. Remplissage simultané (Graphe + Noms)
     while (fgets(line, sizeof(line), file)) {
         if (line[0] == '#' || line[0] == '\n') continue;
@@ -106,7 +108,7 @@ struct Graph* charger_reseau(const char *nom_fichier) {
 
 void afficher_info_station(struct Graph *graph) {
     char input[100];
-    printf("Entrez un id ou un nom : ");
+    printf("Entrez l'ID ou le Nom de la station pour lister ses informations : ");
     scanf(" %99[^\n]", input);
 
     char *endptr;
@@ -117,8 +119,8 @@ void afficher_info_station(struct Graph *graph) {
     else id = chercher_id_par_nom(input);
 
     if (id >= 0 && id < nb_stations_global && tableau_stations[id].nom) {
-        printf("\nStation : %s (ID: %d)\nDegré : %d\n",
-               tableau_stations[id].nom, id, degreSortant(graph, id));
+        printf("\n--- Informations de la station %s (ID: %d) ---\n", tableau_stations[id].nom, id);
+        printf("Stations voisines : %d\n", degreSortant(graph, id));
     } else printf("Station '%s' inconnue.\n", input);
 }
 
@@ -163,7 +165,7 @@ void liberer_tout() {
     tableau_stations = NULL;
 
     // Libérer les HashNodes
-    for (int i = 0; i < 1024; i++) {
+    for (int i = 0; i < HASH_SIZE; i++) {
         HashNode *curr = table_hachage[i];
         while (curr) {
             HashNode *tmp = curr;
