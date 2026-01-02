@@ -4,6 +4,7 @@
 // Structure de graphe et nœud
 struct Node {
     int vertex;
+    int weight;
     struct Node* next;
 };
 
@@ -15,7 +16,7 @@ struct Graph {
 
 // Prototypes des fonctions
 struct Graph* createGraph(int vertices, int isDirected);
-void addEdge(struct Graph* graph, int src, int dest);
+void addEdge(struct Graph* graph, int src, int dest, int weight);
 void printGraph(struct Graph* graph);
 int degreSortant(struct Graph* graph, int station);
 void freeGraph(struct Graph* graph);

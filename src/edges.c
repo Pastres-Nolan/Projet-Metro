@@ -5,13 +5,14 @@
 
 
 // Function to create a new node
-struct Node* createNode(int v) {
+struct Node* createNode(int v, int weight) {
     struct Node* newNode = malloc(sizeof(struct Node));
     if (!newNode) {
         perror("Erreur malloc Node");
         exit(EXIT_FAILURE);
     }
     newNode -> vertex = v;
+    newNode->weight = weight;
     newNode -> next = NULL;
     return newNode;
 }
@@ -50,7 +51,7 @@ static int edgeExists(struct Graph* graph, int src, int dest) {
 }
 
 // Function to add an edge to the graph
-void addEdge(struct Graph* graph, int src, int dest) {
+void addEdge(struct Graph* graph, int src, int dest, int weight) {
     if (src < 0 || src >= graph->numVertices || dest < 0 || dest >= graph->numVertices) {
         return;
     }
@@ -58,14 +59,14 @@ void addEdge(struct Graph* graph, int src, int dest) {
     if (edgeExists(graph, src, dest)) return;
 
     // Add edge from src to dest
-    struct Node* newNode = createNode(dest);
+    struct Node* newNode = createNode(dest, weight);
     newNode->next = graph->adjLists[src];
     graph->adjLists[src] = newNode;
 
     // If the graph is undirected, add an edge from dest to src as well
     if (!graph->isDirected) {
         if (!edgeExists(graph, dest, src)) {
-            struct Node* newNodeRev = createNode(src);
+            struct Node* newNodeRev = createNode(src, weight);
             newNodeRev->next = graph->adjLists[dest];
             graph->adjLists[dest] = newNodeRev;
         }
@@ -81,7 +82,7 @@ void printGraph(struct Graph* graph) {
         if (temp) {
             printf("Station %d :", v);
             while (temp) {
-                printf(" %d ->", temp->vertex);
+                printf(" %d(%dmn) ->", temp->vertex, temp->weight);
                 temp = temp->next;
             }
             printf(" NULL \n");

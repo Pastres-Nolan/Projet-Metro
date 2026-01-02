@@ -30,7 +30,7 @@ static int hash(const char *nom) {
 int chercher_id_par_nom(const char *nom) {
     HashNode *curr = table_hachage[hash(nom)];
     while (curr) {
-        if (strcmp(curr->station->nom, nom) == 0) {
+        if (curr->station && curr->station->nom && strcmp(curr->station->nom, nom) == 0) {
             return curr->station->id;
         }
         curr = curr->next;
@@ -76,20 +76,24 @@ struct Graph* charger_reseau(const char *nom_fichier) {
 
             if (id_str && nom) {
                 int id = atoi(id_str);
-                tableau_stations[id].id = id;
-                tableau_stations[id].nom = strdup(nom);
-                // Insertion dans la table de hachage
-                int h = hash(nom);
-                HashNode *hn = malloc(sizeof(HashNode));
-                hn->station = &tableau_stations[id];
-                hn->next = table_hachage[h];
-                table_hachage[h] = hn;
+                if (id >= 0 && id < nb_stations_global) {
+
+                    tableau_stations[id].id = id;
+                    tableau_stations[id].nom = strdup(nom);
+                    // Insertion dans la table de hachage
+                    int h = hash(nom);
+                    HashNode *hn = malloc(sizeof(HashNode));
+                    hn->station = &tableau_stations[id];
+                    hn->next = table_hachage[h];
+                    table_hachage[h] = hn;
+                }
             }
         } else if (strcmp(type, "EDGE") == 0) {
             char *s_str = strtok(NULL, ";");
             char *d_str = strtok(NULL, ";");
-            if (s_str && d_str) {
-                addEdge(g, atoi(s_str), atoi(d_str));
+            char *t_str = strtok(NULL, ";\n\r");
+            if (s_str && d_str && t_str) {
+                addEdge(g, atoi(s_str), atoi(d_str), atoi(t_str));
             }
         }
         free(line_copy);
@@ -103,34 +107,19 @@ struct Graph* charger_reseau(const char *nom_fichier) {
 void afficher_info_station(struct Graph *graph) {
     char input[100];
     printf("Entrez un id ou un nom : ");
-    // On vide le tampon avant de lire pour éviter les problèmes avec les scanf précédents
-    while (getchar() != '\n' && !feof(stdin));
-    if (fgets(input, sizeof(input), stdin) == NULL) return;
+    scanf(" %99[^\n]", input);
 
-    // Enlever le \n à la fin de la saisie
-    input[strcspn(input, "\n")] = 0;
-
-    int id = -1;
     char *endptr;
     long val = strtol(input, &endptr, 10);
+    int id = -1;
 
-    // Si endptr pointe sur la fin de chaîne, c'est un nombre pur (ID)
-    if (*endptr == '\0' && strlen(input) > 0) {
-        id = (int)val;
-    } else {
-        // Sinon c'est un nom
-        id = chercher_id_par_nom(input);
-    }
+    if (*endptr == '\0') id = (int)val;
+    else id = chercher_id_par_nom(input);
 
     if (id >= 0 && id < nb_stations_global && tableau_stations[id].nom) {
-        printf("\n--- Informations Station ---\n");
-        printf("ID   : %d\n", id);
-        printf("Nom  : %s\n", tableau_stations[id].nom);
-        printf("Degré: %d\n", degreSortant(graph, id));
-    } else {
-        printf("Station '%s' inconnue.\n", input);
-    }
-
+        printf("\nStation : %s (ID: %d)\nDegré : %d\n",
+               tableau_stations[id].nom, id, degreSortant(graph, id));
+    } else printf("Station '%s' inconnue.\n", input);
 }
 
 void liberer_tout() {
