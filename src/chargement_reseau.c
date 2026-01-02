@@ -155,7 +155,23 @@ void afficher_voisins_station(struct Graph *graph) {
 
 
 void liberer_tout() {
-    for (int i = 0; i < nb_stations_global; i++) free(tableau_stations[i].nom);
+    // Libérer les noms des stations
+    for (int i = 0; i < nb_stations_global; i++) {
+        free(tableau_stations[i].nom);
+    }
     free(tableau_stations);
-    // + libération des HashNodes (boucle simple)
+    tableau_stations = NULL;
+
+    // Libérer les HashNodes
+    for (int i = 0; i < 1024; i++) {
+        HashNode *curr = table_hachage[i];
+        while (curr) {
+            HashNode *tmp = curr;
+            curr = curr->next;
+            free(tmp);
+        }
+        table_hachage[i] = NULL;
+    }
+
+    nb_stations_global = 0;
 }

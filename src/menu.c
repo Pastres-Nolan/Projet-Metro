@@ -3,6 +3,10 @@
 #include "chargement_reseau.h"
 #include "edges.h"   
 
+void vider_buffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
 
 void menu(const char *nom_fichier){
     int entry = -1;
@@ -14,9 +18,7 @@ void menu(const char *nom_fichier){
     }
 
     while (entry != 0){
-      
-        printf("\n");
-        printf("===== MENU RESEAU DE TRANSPORT ===== \n");
+        printf("\n===== MENU RESEAU DE TRANSPORT ===== \n");
         printf("1- Afficher les informations d'une station \n");
         printf("2- Lister les voisins d'une station \n");
         printf("3- Calculer un chemin minimal \n");
@@ -24,7 +26,11 @@ void menu(const char *nom_fichier){
         printf("0- Quitter \n");
         printf("Votre choix : ");
     
-        scanf("%d", &entry);
+        if (scanf("%d", &entry) != 1) {  // Vérifie si l'entrée est un entier
+            printf("Saisie invalide.\n");
+            vider_buffer();  // Vider le buffer pour éviter une boucle infinie
+            continue;        // Recommence la boucle
+        }
 
         switch (entry){
 
@@ -41,6 +47,13 @@ void menu(const char *nom_fichier){
         
         case 4:
             break;
+
+        case 0:
+            printf("Au revoir !\n");
+            break;
+
+        default:
+            printf("Choix invalide, réessayez.\n");
         }
     }
     liberer_tout();

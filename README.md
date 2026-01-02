@@ -12,11 +12,6 @@
     - `make re`     : recompilation propre
 - OK : Lancement de l'exécutable avec `./metro nom_fichier` ou juste `./metro`
 
-## menu.c
-- Ajouter un `default` dans le `switch`.
-- Implémenter un test pour :
-    - `scanf("%d", &entry);`
-
 ## Global
 - Rédiger le rapport.
 - Effectuer des tests.
