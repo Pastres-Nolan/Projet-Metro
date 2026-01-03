@@ -4,6 +4,7 @@
 #include "algorithmes.h"
 #include "edges.h"
 #include "chargement_reseau.h"
+#include "../include/chargement_reseau.h"
 
 #define INF INT_MAX
 
@@ -23,11 +24,11 @@ static int trouver_min_distance(int dist[], int visite[], int nb_sommets) {
 // Affiche récursivement le chemin en remontant les prédécesseurs
 static void afficher_chemin_recursif(int parent[], int j) {
     if (parent[j] == -1) {
-        printf("%d", j);
+        printf("%s (%d)", obtenir_nom_station(j), j);
         return;
     }
     afficher_chemin_recursif(parent, parent[j]);
-    printf(" -> %d", j);
+    printf(" -> %s (%d)", obtenir_nom_station(j), j);
 }
 
 void dijkstra(struct Graph* g, int start_node, int end_node) {

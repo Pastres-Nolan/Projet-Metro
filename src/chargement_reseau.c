@@ -40,6 +40,11 @@ int chercher_id_par_nom(const char *nom) {
     return -1;
 }
 
+char* obtenir_nom_station(int id) {
+    if (id >= 0 && id < nb_stations_global) return tableau_stations[id].nom;
+    return "Inconnu";
+}
+
 struct Graph* charger_reseau(const char *nom_fichier) {
     FILE *file = fopen(nom_fichier, "r");
     if (!file) return NULL;
