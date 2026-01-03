@@ -8,7 +8,7 @@
 struct Node* createNode(int v, int weight) {
     struct Node* newNode = malloc(sizeof(struct Node));
     if (!newNode) {
-        perror("Erreur malloc Node");
+        perror("Erreur : malloc Node");
         exit(EXIT_FAILURE);
     }
     newNode -> vertex = v;
@@ -73,6 +73,7 @@ void addEdge(struct Graph* graph, int src, int dest, int weight) {
     }
 }
 
+/* ENLEVER
 // Function to print the adjacency list representation of the graph
 void printGraph(struct Graph* graph) {
     if (!graph) return;
@@ -89,7 +90,7 @@ void printGraph(struct Graph* graph) {
         }
     }
 }
-
+*/
 
 int degreSortant(struct Graph* graph, int station){
     if (!graph || station < 0 || station >= graph->numVertices) return 0;

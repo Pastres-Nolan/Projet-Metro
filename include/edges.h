@@ -17,7 +17,7 @@ struct Graph {
 // Prototypes des fonctions
 struct Graph* createGraph(int vertices, int isDirected);
 void addEdge(struct Graph* graph, int src, int dest, int weight);
-void printGraph(struct Graph* graph);
+// void printGraph(struct Graph* graph); // ENLEVER
 int degreSortant(struct Graph* graph, int station);
 void freeGraph(struct Graph* graph);
 

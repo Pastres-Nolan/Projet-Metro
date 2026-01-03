@@ -108,38 +108,52 @@ struct Graph* charger_reseau(const char *nom_fichier) {
 
 void afficher_info_station(struct Graph *graph) {
     char input[100];
-    printf("Entrez l'ID ou le Nom de la station pour lister ses informations : ");
-    scanf(" %99[^\n]", input);
-
     char *endptr;
-    long val = strtol(input, &endptr, 10);
-    int id = -1;
 
-    if (*endptr == '\0') id = (int)val;
-    else id = chercher_id_par_nom(input);
+    printf("Entrez l'ID ou le Nom de la station pour lister ses informations : ");
+    fgets(input, sizeof(input), stdin);
+    input[strcspn(input, "\n")] = 0;
+    if (input[0] == '\0') {
+        printf("Erreur : entrée vide.\n");
+        return;
+    }
+    long val = strtol(input, &endptr, 10);
+    int id;
+
+    if (*endptr == '\0')
+        id = (int)val;
+    else
+        id = chercher_id_par_nom(input);
 
     if (id >= 0 && id < nb_stations_global && tableau_stations[id].nom) {
         printf("\n--- Informations de la station %s (ID: %d) ---\n", tableau_stations[id].nom, id);
         printf("Stations voisines : %d\n", degreSortant(graph, id));
-    } else printf("Station '%s' inconnue.\n", input);
+    } else printf("Erreur : Station '%s' inconnue.\n", input);
 }
 
 void afficher_voisins_station(struct Graph *graph) {
     char input[100];
-    printf("Entrez l'ID ou le Nom de la station pour lister ses voisins : ");
-    scanf(" %99[^\n]", input);
-
     char *endptr;
-    int id = (int)strtol(input, &endptr, 10);
-    if (*endptr != '\0') {
-        id = chercher_id_par_nom(input);
+
+    printf("Entrez l'ID ou le Nom de la station pour lister ses voisins : ");
+    fgets(input, sizeof(input), stdin);
+    input[strcspn(input, "\n")] = 0;
+    if (input[0] == '\0') {
+        printf("Erreur : entrée vide.\n");
+        return;
     }
+    long val = strtol(input, &endptr, 10);
+    int id;
+    if (*endptr == '\0')
+        id = (int)val;
+    else
+        id = chercher_id_par_nom(input);
 
     if (id >= 0 && id < nb_stations_global && tableau_stations[id].nom) {
         printf("\n--- Voisins de la station %s (ID: %d) ---\n", tableau_stations[id].nom, id);
         struct Node* temp = graph->adjLists[id];
 
-        if (temp == NULL) {
+        if (!temp) {
             printf("Cette station n'a aucun voisin direct.\n");
             return;
         }
@@ -151,7 +165,7 @@ void afficher_voisins_station(struct Graph *graph) {
             temp = temp->next;
         }
     } else {
-        printf("Station '%s' inconnue.\n", input);
+        printf("Erreur : Station '%s' inconnue.\n", input);
     }
 }
 
