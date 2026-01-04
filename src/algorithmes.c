@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
-#include "algorithmes.h"
-#include "edges.h"
-#include "chargement_reseau.h"
+#include "../include/algorithmes.h"
+#include "../include/edges.h"
 #include "../include/chargement_reseau.h"
 
 #define INF INT_MAX
@@ -32,11 +31,24 @@ static void afficher_chemin_recursif(int parent[], int j) {
 }
 
 void dijkstra(struct Graph* g, int start_node, int end_node) {
+    if (!g) {
+        printf("Erreur : graphe inexistant.\n");
+        return;
+    }
     int n = g->numVertices;
+    if (start_node < 0 || start_node >= n || end_node   < 0 || end_node   >= n) {
+        printf("Erreur : ID de station invalide.\n");
+        return;
+    }
     int *dist = malloc(n * sizeof(int));
     int *visite = malloc(n * sizeof(int));
     int *parent = malloc(n * sizeof(int));
 
+    if (!dist || !visite || !parent) {
+        free(dist); free(visite); free(parent);
+        printf("Erreur : allocation mémoire.\n");
+        return;
+    }
     for (int i = 0; i < n; i++) {
         dist[i] = INF;
         visite[i] = 0;
@@ -47,18 +59,16 @@ void dijkstra(struct Graph* g, int start_node, int end_node) {
 
     for (int count = 0; count < n - 1; count++) {
         int u = trouver_min_distance(dist, visite, n);
-        if (u == -1 || u == end_node) break;
-
+        if (u == -1) break;
         visite[u] = 1;
+        if (u == end_node) break;
 
-        struct Node* temp = g->adjLists[u];
-        while (temp) {
+        for (struct Node *temp = g->adjLists[u]; temp; temp = temp->next) {
             int v = temp->vertex;
             if (!visite[v] && dist[u] != INF && dist[u] + temp->weight < dist[v]) {
                 dist[v] = dist[u] + temp->weight;
                 parent[v] = u;
             }
-            temp = temp->next;
         }
     }
 

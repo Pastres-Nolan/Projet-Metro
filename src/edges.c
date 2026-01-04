@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "edges.h"
-
+#include "../include/edges.h"
 
 // Function to create a new node
 struct Node* createNode(int v, int weight) {

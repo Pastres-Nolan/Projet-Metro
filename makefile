@@ -2,7 +2,7 @@ CC      = gcc
 CFLAGS  = -std=c99 -Wall -Wextra -Iinclude
 NAME    = metro
 
-SRC     = src/main.c src/menu.c src/edges.c src/chargement_reseau.c src/algorithmes.o
+SRC     = src/main.c src/menu.c src/edges.c src/chargement_reseau.c src/algorithmes.c src/degre_tri.c
 
 OBJ     = $(SRC:.c=.o)
 

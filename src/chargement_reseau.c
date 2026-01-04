@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "chargement_reseau.h"
-#include "edges.h"
+#include "../include/edges.h"
+#include "../include/chargement_reseau.h"
 
 #define HASH_SIZE 1024
 
@@ -52,29 +52,45 @@ struct Graph* charger_reseau(const char *nom_fichier) {
     char line[2048];
     int max_id = -1;
     while (fgets(line, sizeof(line), file)) {
-        if (line[0] == 'S') {
+        if (strncmp(line, "STATION", 7) == 0) {
             char *copy = strdup(line);
-            char *t = strtok(copy, ";");
-            char *i = strtok(NULL, ";");
-            if (t && i && strcmp(t, "STATION") == 0) {
-                int id = atoi(i);
+            if (!copy) continue; // Malloc check
+            strtok(copy, ";");
+            char *id_str = strtok(NULL, ";");
+            if (id_str) {
+                int id = atoi(id_str);
                 if (id > max_id) max_id = id;
             }
             free(copy);
         }
     }
-
+    if (max_id < 0) {
+        fclose(file);
+        return NULL;
+    }
     rewind(file);
     // 2. Allocation dynamique
+    liberer_tout();
     nb_stations_global = max_id + 1;
     tableau_stations = calloc(nb_stations_global, sizeof(Station));
+    if (!tableau_stations) {
+        fclose(file);
+        return NULL;
+    }
     struct Graph *g = createGraph(nb_stations_global, 1);
+    if (!g) {
+        free(tableau_stations);
+        tableau_stations = NULL;
+        fclose(file);
+        return NULL;
+    }
     for (int i = 0; i < HASH_SIZE; i++) table_hachage[i] = NULL;
     // 3. Remplissage simultané (Graphe + Noms)
     while (fgets(line, sizeof(line), file)) {
         if (line[0] == '#' || line[0] == '\n') continue;
 
         char *line_copy = strdup(line);
+        if (!line_copy) continue;
         char *type = strtok(line_copy, ";");
 
         if (type && strcmp(type, "STATION") == 0) {
@@ -84,18 +100,32 @@ struct Graph* charger_reseau(const char *nom_fichier) {
             if (id_str && nom) {
                 int id = atoi(id_str);
                 if (id >= 0 && id < nb_stations_global) {
+                    char *tmp_nom = strdup(nom);
+                    if (!tmp_nom) {
+                        free(line_copy);
+                        continue;
+                    }
+
+                    HashNode *hn = malloc(sizeof(HashNode));
+                    if (!hn) {
+                        free(tmp_nom);
+                        free(line_copy);
+                        continue;
+                    }
 
                     tableau_stations[id].id = id;
-                    tableau_stations[id].nom = strdup(nom);
+                    tableau_stations[id].nom = tmp_nom;
                     // Insertion dans la table de hachage
-                    int h = hash(nom);
-                    HashNode *hn = malloc(sizeof(HashNode));
+                    int h = hash(tmp_nom);
                     hn->station = &tableau_stations[id];
                     hn->next = table_hachage[h];
                     table_hachage[h] = hn;
                 }
+            } else {
+                fprintf(stderr, "Avertissement : Ligne station malformée ignorée.\n");
             }
-        } else if (strcmp(type, "EDGE") == 0) {
+
+        } else if (type && strcmp(type, "EDGE") == 0) {
             char *s_str = strtok(NULL, ";");
             char *d_str = strtok(NULL, ";");
             char *t_str = strtok(NULL, ";\n\r");
@@ -108,72 +138,6 @@ struct Graph* charger_reseau(const char *nom_fichier) {
     fclose(file);
     return g;
 }
-
-
-
-void afficher_info_station(struct Graph *graph) {
-    char input[100];
-    char *endptr;
-
-    printf("Entrez l'ID ou le Nom de la station pour lister ses informations : ");
-    fgets(input, sizeof(input), stdin);
-    input[strcspn(input, "\n")] = 0;
-    if (input[0] == '\0') {
-        printf("Erreur : entrée vide.\n");
-        return;
-    }
-    long val = strtol(input, &endptr, 10);
-    int id;
-
-    if (*endptr == '\0')
-        id = (int)val;
-    else
-        id = chercher_id_par_nom(input);
-
-    if (id >= 0 && id < nb_stations_global && tableau_stations[id].nom) {
-        printf("\n--- Informations de la station %s (ID: %d) ---\n", tableau_stations[id].nom, id);
-        printf("Stations voisines : %d\n", degreSortant(graph, id));
-    } else printf("Erreur : Station '%s' inconnue.\n", input);
-}
-
-void afficher_voisins_station(struct Graph *graph) {
-    char input[100];
-    char *endptr;
-
-    printf("Entrez l'ID ou le Nom de la station pour lister ses voisins : ");
-    fgets(input, sizeof(input), stdin);
-    input[strcspn(input, "\n")] = 0;
-    if (input[0] == '\0') {
-        printf("Erreur : entrée vide.\n");
-        return;
-    }
-    long val = strtol(input, &endptr, 10);
-    int id;
-    if (*endptr == '\0')
-        id = (int)val;
-    else
-        id = chercher_id_par_nom(input);
-
-    if (id >= 0 && id < nb_stations_global && tableau_stations[id].nom) {
-        printf("\n--- Voisins de la station %s (ID: %d) ---\n", tableau_stations[id].nom, id);
-        struct Node* temp = graph->adjLists[id];
-
-        if (!temp) {
-            printf("Cette station n'a aucun voisin direct.\n");
-            return;
-        }
-
-        while (temp) {
-            int v_id = temp->vertex;
-            char* v_nom = tableau_stations[v_id].nom ? tableau_stations[v_id].nom : "Inconnu";
-            printf(" %d - %s (%d min)\n", v_id, v_nom, temp->weight);
-            temp = temp->next;
-        }
-    } else {
-        printf("Erreur : Station '%s' inconnue.\n", input);
-    }
-}
-
 
 void liberer_tout() {
     // Libérer les noms des stations

@@ -1,10 +1,11 @@
 #include <stdio.h>
-#include "menu.h"
-#include "chargement_reseau.h"
-#include "edges.h"
-#include "algorithmes.h"
 #include <string.h>
 #include <stdlib.h>
+#include "../include/menu.h"
+#include "../include/algorithmes.h"
+#include "../include/edges.h"
+#include "../include/chargement_reseau.h"
+#include "../include/degre_tri.h"
 
 void vider_buffer() {
     int c;
@@ -40,42 +41,16 @@ void menu(const char *nom_fichier){
         case 1:
             afficher_info_station(g);
             break;
-        
+
         case 2:
             afficher_voisins_station(g);
             break;
 
-        case 3: {
-            char nom_dep[100], nom_arr[100];
-            char *endptr;
-            int id_dep, id_arr;
-
-            printf("Entrez l'ID ou le Nom de la station de départ : ");
-            fgets(nom_dep, sizeof(nom_dep), stdin);
-            nom_dep[strcspn(nom_dep, "\n")] = 0;
-
-            // Détection ID ou Nom pour le départ
-            long val_dep = strtol(nom_dep, &endptr, 10);
-            if (*endptr == '\0' && strlen(nom_dep) > 0) id_dep = (int)val_dep;
-            else id_dep = chercher_id_par_nom(nom_dep);
-
-            printf("Entrez l'ID ou le Nom de la station d'arrivée : ");
-            fgets(nom_arr, sizeof(nom_arr), stdin);
-            nom_arr[strcspn(nom_arr, "\n")] = 0;
-
-            // Détection ID ou Nom pour l'arrivée
-            long val_arr = strtol(nom_arr, &endptr, 10);
-            if (*endptr == '\0' && strlen(nom_arr) > 0) id_arr = (int)val_arr;
-            else id_arr = chercher_id_par_nom(nom_arr);
-
-            if (id_dep != -1 && id_arr != -1) {
-                dijkstra(g, id_dep, id_arr);
-            } else {
-                printf("Erreur : Station(s) introuvable(s).\n");
-            }
+        case 3:
+            calcul_chemin_minimal(g);
             break;
-        }
         case 4:
+            // code à compléter
             break;
 
         case 0:
@@ -85,7 +60,92 @@ void menu(const char *nom_fichier){
         default:
             printf("Choix invalide, réessayez.\n");
         }
+
     }
     liberer_tout();
     freeGraph(g);
+}
+
+
+void afficher_info_station(struct Graph *graph) {
+    char input[100];
+    char *endptr;
+
+    printf("Entrez l'ID ou le Nom de la station pour lister ses informations : ");
+    fgets(input, sizeof(input), stdin);
+    input[strcspn(input, "\n")] = 0;
+    if (input[0] == '\0') {
+        printf("Erreur : entrée vide.\n");
+        return;
+    }
+    long val = strtol(input, &endptr, 10);
+    int id = (*endptr == '\0') ? (int)val : chercher_id_par_nom(input);
+    char* nom = obtenir_nom_station(id);
+
+    if (strcmp(nom, "Inconnu") != 0) {
+        printf("\n--- Informations de la station %s (ID: %d) ---\n", nom, id);
+        printf("Stations voisines : %d\n", degreSortant(graph, id));
+    } else printf("Erreur : Station '%s' inconnue.\n", input);
+}
+
+void afficher_voisins_station(struct Graph *graph) {
+    char input[100];
+    char *endptr;
+
+    printf("Entrez l'ID ou le Nom de la station pour lister ses voisins : ");
+    fgets(input, sizeof(input), stdin);
+    input[strcspn(input, "\n")] = 0;
+    if (input[0] == '\0') {
+        printf("Erreur : entrée vide.\n");
+        return;
+    }
+    long val = strtol(input, &endptr, 10);
+    int id = (*endptr == '\0') ? (int)val : chercher_id_par_nom(input);
+    char* nom = obtenir_nom_station(id);
+
+    if (strcmp(nom, "Inconnu") != 0) {
+        printf("\n--- Voisins de la station %s (ID: %d) ---\n", nom, id);
+        struct Node* temp = graph->adjLists[id];
+
+        if (!temp) {
+            printf("Cette station n'a aucun voisin direct.\n");
+            return;
+        }
+
+        while (temp) {
+            printf(" %d - %s (%d min)\n", temp->vertex, obtenir_nom_station(temp->vertex), temp->weight);
+            temp = temp->next;
+        }
+    } else {
+        printf("Erreur : Station '%s' inconnue.\n", input);
+    }
+}
+
+void calcul_chemin_minimal(struct Graph *graph) {
+    char nom_dep[100], nom_arr[100];
+    char *endptr;
+    int id_dep, id_arr;
+
+    printf("Entrez l'ID ou le Nom de la station de départ : ");
+    fgets(nom_dep, sizeof(nom_dep), stdin);
+    nom_dep[strcspn(nom_dep, "\n")] = 0;
+
+    // Détection ID ou Nom pour le départ
+    long val_dep = strtol(nom_dep, &endptr, 10);
+    id_dep = (*endptr == '\0' && strlen(nom_dep) > 0) ? (int)val_dep : chercher_id_par_nom(nom_dep);
+
+    printf("Entrez l'ID ou le Nom de la station d'arrivée : ");
+    fgets(nom_arr, sizeof(nom_arr), stdin);
+    nom_arr[strcspn(nom_arr, "\n")] = 0;
+
+    // Détection ID ou Nom pour l'arrivée
+    long val_arr = strtol(nom_arr, &endptr, 10);
+    id_arr = (*endptr == '\0' && strlen(nom_arr) > 0) ? (int)val_arr : chercher_id_par_nom(nom_arr);
+
+
+    if (id_dep != -1 && id_arr != -1) {
+        dijkstra(graph, id_dep, id_arr);
+    } else {
+        printf("Erreur : Station(s) introuvable(s).\n");
+    }
 }
