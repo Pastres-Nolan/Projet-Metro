@@ -80,8 +80,7 @@ struct Graph* charger_reseau(const char *nom_fichier) {
     }
     struct Graph *g = createGraph(nb_stations_global, 1);
     if (!g) {
-        free(tableau_stations);
-        tableau_stations = NULL;
+        liberer_tout();
         fclose(file);
         return NULL;
     }
@@ -101,6 +100,9 @@ struct Graph* charger_reseau(const char *nom_fichier) {
             if (id_str && nom) {
                 int id = atoi(id_str);
                 if (id >= 0 && id < nb_stations_global) {
+                    if (tableau_stations[id].nom != NULL) {
+                        free(tableau_stations[id].nom);
+                    }
                     char *tmp_nom = strdup(nom);
                     if (!tmp_nom) {
                         free(line_copy);
