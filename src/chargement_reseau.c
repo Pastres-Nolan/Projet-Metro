@@ -101,6 +101,7 @@ struct Graph* charger_reseau(const char *nom_fichier) {
                 int id = atoi(id_str);
                 if (id >= 0 && id < nb_stations_global) {
                     if (tableau_stations[id].nom != NULL) {
+                        fprintf(stderr, "Avertissement : ID de station en double détecté (%d). L'ancien nom '%s' sera remplacé par '%s'.\n", id, tableau_stations[id].nom, nom);
                         free(tableau_stations[id].nom);
                     }
                     char *tmp_nom = strdup(nom);

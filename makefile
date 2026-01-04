@@ -1,5 +1,5 @@
 CC      = gcc
-CFLAGS  = -std=c99 -Wall -Wextra -Iinclude -g -O0
+CFLAGS  = -std=c99 -Wall -Wextra -Iinclude # -g -O0 # (pour Valgrind, valgrind --leak-check=full --track-origins=yes ./metro)
 NAME    = metro
 
 SRC     = src/main.c src/menu.c src/edges.c src/chargement_reseau.c src/algorithmes.c src/degre_tri.c
