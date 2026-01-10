@@ -8,7 +8,7 @@ struct Node* createNode(int v, int weight) {
     struct Node* newNode = malloc(sizeof(struct Node));
     if (!newNode) {
         perror("Erreur : malloc Node");
-        exit(EXIT_FAILURE);
+        return NULL;
     }
     newNode -> vertex = v;
     newNode->weight = weight;
@@ -19,8 +19,10 @@ struct Node* createNode(int v, int weight) {
 // Function to create a graph
 struct Graph* createGraph(int vertices, int isDirected) {
     struct Graph* graph = malloc(sizeof(struct Graph));
-    if (!graph) return NULL;
-
+    if (!graph) {
+        perror("Erreur : malloc Graph");
+        return NULL;
+    }
     graph->numVertices = vertices;
     graph->isDirected = isDirected;
 
@@ -29,6 +31,7 @@ struct Graph* createGraph(int vertices, int isDirected) {
 
     if (!graph->adjLists) {
         free(graph);
+        perror("Erreur : malloc adjLists");
         return NULL;
     }
 
@@ -51,7 +54,12 @@ static int edgeExists(const struct Graph* graph, int src, int dest) {
 
 // Function to add an edge to the graph
 void addEdge(struct Graph* graph, int src, int dest, int weight) {
+    if (!graph) {
+        fprintf(stderr, "Erreur : graphe inexistant.\n");
+        return;
+    }
     if (src < 0 || src >= graph->numVertices || dest < 0 || dest >= graph->numVertices) {
+        fprintf(stderr, "Erreur : addEdge avec IDs invalides (%d -> %d)\n", src, dest);
         return;
     }
 
@@ -91,8 +99,11 @@ void printGraph(struct Graph* graph) {
 }
 */
 
-int degreSortant(struct Graph* graph, int station){
-    if (!graph || station < 0 || station >= graph->numVertices) return 0;
+int degreSortant(struct Graph* graph, int station) {
+    if (!graph || station < 0 || station >= graph->numVertices) {
+        fprintf(stderr, "Erreur : degreSortant avec station invalide (%d)\n", station);
+        return 0;
+    }
     int compteur = 0;
     struct Node* temp = graph->adjLists[station];
 

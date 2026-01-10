@@ -48,7 +48,7 @@ static void tri_insertion(StationDegre tableau[], int n, StatsTri *stats) {
     }
 }
 
-// Partition pour le Tri Rapide (QuickSort)
+// Partition pour le Tri Rapide (croissant)
 static int partition(StationDegre tableau[], int bas, int haut, StatsTri *stats) {
     int pivot = tableau[haut].degre;
     int i = (bas - 1);
@@ -63,7 +63,7 @@ static int partition(StationDegre tableau[], int bas, int haut, StatsTri *stats)
     return (i + 1);
 }
 
-// Tri Rapide récursif (QuickSort)
+// Tri Rapide récursif (croissant)
 static void tri_rapide(StationDegre tableau[], int bas, int haut, StatsTri *stats) {
     if (bas < haut) {
         int pi = partition(tableau, bas, haut, stats);
@@ -73,11 +73,17 @@ static void tri_rapide(StationDegre tableau[], int bas, int haut, StatsTri *stat
 }
 
 void executer_et_afficher_tri(struct Graph *graph, int type_tri) {
-    if (!graph) return;
+    if (!graph) {
+        fprintf(stderr, "Erreur : graphe inexistant.\n");
+        return;
+    }
 
     int n = graph->numVertices;
     StationDegre *tableau = malloc(n * sizeof(StationDegre));
-    if (!tableau) return;
+    if (!tableau) {
+        perror("Erreur : malloc tableau StationDegre");
+        return;
+    }
 
     // Remplissage du tableau des couples (id, degre)
     int nb_valides = 0;

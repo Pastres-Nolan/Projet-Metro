@@ -55,7 +55,12 @@ struct Graph* charger_reseau(const char *nom_fichier) {
     while (fgets(line, sizeof(line), file)) {
         if (strncmp(line, "STATION", 7) == 0) {
             char *copy = strdup(line);
-            if (!copy) continue; // Malloc check
+            if (!copy) {
+                perror("Erreur : strdup copy");
+                liberer_tout();
+                fclose(file);
+                return NULL;
+            }
             strtok(copy, ";");
             char *id_str = strtok(NULL, ";");
             if (id_str) {
@@ -75,11 +80,13 @@ struct Graph* charger_reseau(const char *nom_fichier) {
     nb_stations_global = max_id + 1;
     tableau_stations = calloc(nb_stations_global, sizeof(Station));
     if (!tableau_stations) {
+        perror("Erreur : calloc tableau_stations");
         fclose(file);
         return NULL;
     }
-    struct Graph *g = createGraph(nb_stations_global, 1);
-    if (!g) {
+    struct Graph* graph = createGraph(nb_stations_global, 1);
+    if (!graph) {
+        perror("Erreur : malloc graph");
         liberer_tout();
         fclose(file);
         return NULL;
@@ -90,7 +97,13 @@ struct Graph* charger_reseau(const char *nom_fichier) {
         if (line[0] == '#' || line[0] == '\n') continue;
 
         char *line_copy = strdup(line);
-        if (!line_copy) continue;
+        if (!line_copy) {
+            perror("Erreur : strdup line_copy");
+            freeGraph(graph);
+            liberer_tout();
+            fclose(file);
+            return NULL;
+        }
         char *type = strtok(line_copy, ";");
 
         if (type && strcmp(type, "STATION") == 0) {
@@ -106,15 +119,23 @@ struct Graph* charger_reseau(const char *nom_fichier) {
                     }
                     char *tmp_nom = strdup(nom);
                     if (!tmp_nom) {
+                        perror("Erreur : strdup nom");
                         free(line_copy);
-                        continue;
+                        freeGraph(graph);
+                        liberer_tout();
+                        fclose(file);
+                        return NULL;
                     }
 
                     HashNode *hn = malloc(sizeof(HashNode));
                     if (!hn) {
+                        perror("Erreur : malloc HashNode");
                         free(tmp_nom);
                         free(line_copy);
-                        continue;
+                        freeGraph(graph);
+                        liberer_tout();
+                        fclose(file);
+                        return NULL;
                     }
 
                     tableau_stations[id].id = id;
@@ -126,21 +147,26 @@ struct Graph* charger_reseau(const char *nom_fichier) {
                     table_hachage[h] = hn;
                 }
             } else {
-                fprintf(stderr, "Avertissement : Ligne station malformée ignorée.\n");
+                fprintf(stderr, "Avertissement : Ligne STATION malformée ignorée.\n");
             }
 
         } else if (type && strcmp(type, "EDGE") == 0) {
             char *s_str = strtok(NULL, ";");
             char *d_str = strtok(NULL, ";");
             char *t_str = strtok(NULL, ";\n\r");
-            if (s_str && d_str && t_str) {
-                addEdge(g, atoi(s_str), atoi(d_str), atoi(t_str));
+            if (s_str && strlen(s_str) > 0 &&
+                d_str && strlen(d_str) > 0 &&
+                t_str && strlen(t_str) > 0) {
+                addEdge(graph, atoi(s_str), atoi(d_str), atoi(t_str));
+            }
+            else {
+                fprintf(stderr, "Avertissement : Ligne EDGE malformée ignorée.\n");
             }
         }
         free(line_copy);
     }
     fclose(file);
-    return g;
+    return graph;
 }
 
 void liberer_tout() {

@@ -7,12 +7,12 @@
 - Compiler dans le dossier `builds` à créer si inexistant.
 
 ## Global
-- station 76 78 pas de temps
+- Vérifier que tous les `malloc` sont `free`.
 - Renommer les fichiers plus intelligemment.
-- Rédiger le rapport.
-- Effectuer des tests.
-- Ajouter des commentaires et vérifier que tous les `malloc` sont `free`.
-- Attention à la gestion d'erreurs (perror, stderr, autre)
+
+- Rédiger le rapport, avec les réponses aux questions.
+- Commenter le code.
+- Fichier de tests ?
 
 
 

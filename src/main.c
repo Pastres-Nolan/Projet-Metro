@@ -10,7 +10,7 @@ int main(int argc, char **argv){
     } else if (argc == 2) {
         fichier = argv[1];  // fichier fourni
     } else {
-        printf("Erreur : trop d'arguments fournis.\n");
+        fprintf(stderr, "Erreur : trop d'arguments fournis.\n");
         return 1;
     }
 

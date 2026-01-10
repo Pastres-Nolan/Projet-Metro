@@ -14,10 +14,10 @@ void vider_buffer() {
 
 void menu(const char *nom_fichier){
     int entry = -1;
-    struct Graph *g = charger_reseau(nom_fichier);
+    struct Graph *graph = charger_reseau(nom_fichier);
 
-    if (g == NULL) {
-        printf(" Erreur : Impossible de charger le réseau.\n");
+    if (!graph) {
+        fprintf(stderr, " Erreur : Impossible de charger le réseau.\n");
         return;
     }
 
@@ -31,7 +31,7 @@ void menu(const char *nom_fichier){
         printf("Votre choix : ");
     
         if (scanf("%d", &entry) != 1) {  // Vérifie si l'entrée est un entier
-            printf("Erreur : Saisie invalide.\n");
+            printf("Erreur : saisie invalide.\n");
             vider_buffer();  // Vider le buffer pour éviter une boucle infinie
             continue;        // Recommence la boucle
         }
@@ -39,18 +39,18 @@ void menu(const char *nom_fichier){
         switch (entry){
 
         case 1:
-            afficher_info_station(g);
+            afficher_info_station(graph);
             break;
 
         case 2:
-            afficher_voisins_station(g);
+            afficher_voisins_station(graph);
             break;
 
         case 3:
-            calcul_chemin_minimal(g);
+            calcul_chemin_minimal(graph);
             break;
         case 4:
-            gerer_menu_tri(g);
+            gerer_menu_tri(graph);
             break;
 
         case 0:
@@ -58,12 +58,12 @@ void menu(const char *nom_fichier){
             break;
 
         default:
-            printf("Erreur : Saisie invalide.\n");
+            printf("Erreur : saisie invalide.\n");
         }
 
     }
     liberer_tout();
-    freeGraph(g);
+    freeGraph(graph);
 }
 
 
@@ -144,11 +144,11 @@ void calcul_chemin_minimal(struct Graph *graph) {
     if (id_dep != -1 && id_arr != -1) {
         dijkstra(graph, id_dep, id_arr);
     } else {
-        printf("Erreur : Station(s) introuvable(s).\n");
+        fprintf(stderr, "Erreur : Station(s) introuvable(s).\n");
     }
 }
 
-void gerer_menu_tri(struct Graph *g) {
+void gerer_menu_tri(struct Graph *graph) {
     int choix;
     printf("\n--- Classement des stations par degré ---\n");
     printf("Choisissez l'algorithme de tri :\n");
@@ -159,15 +159,15 @@ void gerer_menu_tri(struct Graph *g) {
 
     if (scanf("%d", &choix) != 1) {
         vider_buffer();
-        printf("Erreur : Saisie invalide.\n");
+        fprintf(stderr, "Erreur : Saisie invalide.\n");
         return;
     }
     vider_buffer();
 
     if (choix >= 1 && choix <= 3) {
         // On appelle le tri en fonction du choix de l'utilisateur
-        executer_et_afficher_tri(g, choix);
+        executer_et_afficher_tri(graph, choix);
     } else {
-        printf("Erreur : Saisie invalide.\n");
+        fprintf(stderr, "Erreur : Saisie invalide.\n");
     }
 }

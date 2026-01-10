@@ -30,14 +30,14 @@ static void afficher_chemin_recursif(int parent[], int j) {
     printf(" -> %s (%d)", obtenir_nom_station(j), j);
 }
 
-void dijkstra(struct Graph* g, int start_node, int end_node) {
-    if (!g) {
-        printf("Erreur : graphe inexistant.\n");
+void dijkstra(struct Graph* graph, int start_node, int end_node) {
+    if (!graph) {
+        fprintf(stderr, "Erreur : graphe inexistant.\n");
         return;
     }
-    int n = g->numVertices;
+    int n = graph->numVertices;
     if (start_node < 0 || start_node >= n || end_node   < 0 || end_node   >= n) {
-        printf("Erreur : ID de station invalide.\n");
+        fprintf(stderr, "Erreur : ID de station invalide.\n");
         return;
     }
     int *dist = malloc(n * sizeof(int));
@@ -46,7 +46,7 @@ void dijkstra(struct Graph* g, int start_node, int end_node) {
 
     if (!dist || !visite || !parent) {
         free(dist); free(visite); free(parent);
-        printf("Erreur : allocation mémoire.\n");
+        perror("Erreur : malloc Dijkstra");
         return;
     }
     for (int i = 0; i < n; i++) {
@@ -63,7 +63,7 @@ void dijkstra(struct Graph* g, int start_node, int end_node) {
         visite[u] = 1;
         if (u == end_node) break;
 
-        for (struct Node *temp = g->adjLists[u]; temp; temp = temp->next) {
+        for (struct Node *temp = graph->adjLists[u]; temp; temp = temp->next) {
             int v = temp->vertex;
             if (!visite[v] && dist[u] != INF && dist[u] + temp->weight < dist[v]) {
                 dist[v] = dist[u] + temp->weight;
