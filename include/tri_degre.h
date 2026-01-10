@@ -1,7 +1,7 @@
-#ifndef DEGRE_TRI_H
-#define DEGRE_TRI_H
+#ifndef TRI_DEGRE_H
+#define TRI_DEGRE_H
 
-#include "edges.h"
+#include "graphe.h"
 
 // Structure stockant le couple (id_station, degre)
 typedef struct {

@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../include/degre_tri.h"
-#include "../include/chargement_reseau.h"
+#include "../include/tri_degre.h"
+#include "../include/station.h"
 
 // Échange deux éléments dans le tableau
 static void echanger(StationDegre *a, StationDegre *b, StatsTri *stats) {

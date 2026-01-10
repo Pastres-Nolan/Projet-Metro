@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "../include/edges.h"
-#include "../include/chargement_reseau.h"
+#include "../include/graphe.h"
+#include "../include/station.h"
 
 #define HASH_SIZE 1024
 

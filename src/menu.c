@@ -2,10 +2,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include "../include/menu.h"
-#include "../include/algorithmes.h"
-#include "../include/edges.h"
-#include "../include/chargement_reseau.h"
-#include "../include/degre_tri.h"
+#include "../include/itineraire.h"
+#include "../include/graphe.h"
+#include "../include/station.h"
+#include "../include/tri_degre.h"
 
 void vider_buffer() {
     int c;

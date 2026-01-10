@@ -1,16 +1,13 @@
-# Liste de tâches
+# Projet Algorithmique & Structures de Données - Réseau de transport et parcours de graphes
+Ce projet modélise un réseau de transport (bus, métro, tram, . . .) sous forme de graphe et propose
+des fonctionnalités d’analyse et de recherche d’itinéraires.
 
-## README.md
-- Faire un README de qualité.
-
-## Makefile
-- Compiler dans le dossier `builds` à créer si inexistant.
-
-## Global
+## Liste de tâches
 - Vérifier que tous les `malloc` sont `free`.
-- Renommer les fichiers plus intelligemment.
-- Rédiger le rapport, avec les réponses aux questions.
 - Commenter le code.
+- Faire un README de qualité.
+- Compiler dans le dossier `builds` à créer si inexistant.
+- Rédiger le rapport, avec les réponses aux questions.
 - Fichier de tests ?
 
 

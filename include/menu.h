@@ -1,7 +1,7 @@
 #ifndef MENU_H
 #define MENU_H
 
-#include "edges.h"
+#include "graphe.h"
 
 void vider_buffer();
 void menu(const char *nom_fichier);

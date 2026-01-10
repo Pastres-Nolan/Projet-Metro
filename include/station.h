@@ -1,7 +1,7 @@
 #ifndef CHARGEMENT_RESEAU_H
 #define CHARGEMENT_RESEAU_H
 
-#include "edges.h"
+#include "graphe.h"
 
 struct Graph* charger_reseau(const char *nom_fichier);
 
