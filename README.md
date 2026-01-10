@@ -9,7 +9,6 @@
 ## Global
 - Vérifier que tous les `malloc` sont `free`.
 - Renommer les fichiers plus intelligemment.
-
 - Rédiger le rapport, avec les réponses aux questions.
 - Commenter le code.
 - Fichier de tests ?

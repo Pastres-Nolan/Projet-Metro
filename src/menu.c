@@ -60,7 +60,10 @@ void menu(const char *nom_fichier){
         default:
             printf("Erreur : saisie invalide.\n");
         }
-
+        if (entry != 0) {
+            printf("\nAppuyez sur Entrée pour revenir au menu");
+            while (getchar() != '\n'); // Attend que l'utilisateur appuie sur Entrée
+        }
     }
     liberer_tout();
     freeGraph(graph);
@@ -84,7 +87,9 @@ void afficher_info_station(struct Graph *graph) {
 
     if (strcmp(nom, "Inconnu") != 0) {
         printf("\n--- Informations de la station %s (ID: %d) ---\n", nom, id);
-        printf("Stations voisines : %d\n", degreSortant(graph, id));
+        printf("Nom    : %s\n", nom);
+        printf("ID     : %d\n", id);
+        printf("Degré  : %d\n", degreSortant(graph, id));
     } else printf("Erreur : Station '%s' inconnue.\n", input);
 }
 
@@ -113,7 +118,7 @@ void afficher_voisins_station(struct Graph *graph) {
         }
 
         while (temp) {
-            printf(" %d - %s (%d min)\n", temp->vertex, obtenir_nom_station(temp->vertex), temp->weight);
+            printf(" %d - %-30s (%d min)\n", temp->vertex, obtenir_nom_station(temp->vertex), temp->weight);
             temp = temp->next;
         }
     } else printf("Erreur : Station '%s' inconnue.\n", input);

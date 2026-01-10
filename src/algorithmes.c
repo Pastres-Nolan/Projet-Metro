@@ -73,9 +73,9 @@ void dijkstra(struct Graph* graph, int start_node, int end_node) {
     }
 
     if (dist[end_node] == INF) {
-        printf("Aucun chemin trouvé entre %d et %d.\n", start_node, end_node);
+        printf("\n--- Aucun chemin trouvé entre %d et %d. ---\n", start_node, end_node);
     } else {
-        printf("Chemin minimal (Temps total : %d min) :\n", dist[end_node]);
+        printf("\n--- Chemin minimal (Temps total : %d min) ---\n", dist[end_node]);
         afficher_chemin_recursif(parent, end_node);
         printf("\n");
     }
