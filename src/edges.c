@@ -72,7 +72,7 @@ void addEdge(struct Graph* graph, int src, int dest, int weight) {
     }
 }
 
-/* ENLEVER
+/* Fonction utile pendant le développement
 // Function to print the adjacency list representation of the graph
 void printGraph(struct Graph* graph) {
     if (!graph) return;

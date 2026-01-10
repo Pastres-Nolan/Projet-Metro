@@ -50,7 +50,7 @@ void menu(const char *nom_fichier){
             calcul_chemin_minimal(g);
             break;
         case 4:
-            // code à compléter
+            gerer_menu_tri(g);
             break;
 
         case 0:
@@ -58,7 +58,7 @@ void menu(const char *nom_fichier){
             break;
 
         default:
-            printf("Choix invalide, réessayez.\n");
+            printf("Erreur : Saisie invalide.\n");
         }
 
     }
@@ -116,9 +116,7 @@ void afficher_voisins_station(struct Graph *graph) {
             printf(" %d - %s (%d min)\n", temp->vertex, obtenir_nom_station(temp->vertex), temp->weight);
             temp = temp->next;
         }
-    } else {
-        printf("Erreur : Station '%s' inconnue.\n", input);
-    }
+    } else printf("Erreur : Station '%s' inconnue.\n", input);
 }
 
 void calcul_chemin_minimal(struct Graph *graph) {
@@ -147,5 +145,29 @@ void calcul_chemin_minimal(struct Graph *graph) {
         dijkstra(graph, id_dep, id_arr);
     } else {
         printf("Erreur : Station(s) introuvable(s).\n");
+    }
+}
+
+void gerer_menu_tri(struct Graph *g) {
+    int choix;
+    printf("\n--- Classement des stations par degré ---\n");
+    printf("Choisissez l'algorithme de tri :\n");
+    printf("1- Tri par sélection\n");
+    printf("2- Tri par insertion\n");
+    printf("3- Tri rapide (récursif)\n");
+    printf("Votre choix : ");
+
+    if (scanf("%d", &choix) != 1) {
+        vider_buffer();
+        printf("Erreur : Saisie invalide.\n");
+        return;
+    }
+    vider_buffer();
+
+    if (choix >= 1 && choix <= 3) {
+        // On appelle le tri en fonction du choix de l'utilisateur
+        executer_et_afficher_tri(g, choix);
+    } else {
+        printf("Erreur : Saisie invalide.\n");
     }
 }
