@@ -3,7 +3,6 @@ Ce projet modélise un réseau de transport (bus, métro, tram, . . .) sous form
 des fonctionnalités d’analyse et de recherche d’itinéraires.
 
 ## Liste de tâches
-- Vérifier que tous les `malloc` sont `free`.
 - Commenter le code.
 - Faire un README de qualité.
 - Compiler dans le dossier `builds` à créer si inexistant.
