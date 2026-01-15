@@ -42,7 +42,7 @@ int chercher_id_par_nom(const char *nom) {
 }
 
 char* obtenir_nom_station(int id) {
-    if (id >= 0 && id < nb_stations_global) return tableau_stations[id].nom;
+    if (tableau_stations != NULL && id >= 0 && id < nb_stations_global && tableau_stations[id].nom != NULL) return tableau_stations[id].nom;
     return "Inconnu";
 }
 
@@ -91,7 +91,13 @@ struct Graph* charger_reseau(const char *nom_fichier) {
         fclose(file);
         return NULL;
     }
-    for (int i = 0; i < HASH_SIZE; i++) table_hachage[i] = NULL;
+    // for (int i = 0; i < HASH_SIZE; i++) table_hachage[i] = NULL;
+
+    for (int i = 0; i < nb_stations_global; i++) {
+        tableau_stations[i].id = i;
+        tableau_stations[i].nom = NULL; // Sera rempli par strdup ou restera NULL
+    }
+
     // 3. Remplissage simultané (Graphe + Noms)
     while (fgets(line, sizeof(line), file)) {
         if (line[0] == '#' || line[0] == '\n') continue;

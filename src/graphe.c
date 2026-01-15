@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "../include/station.h"
 #include "../include/graphe.h"
 
 // Function to create a new node
@@ -62,6 +63,11 @@ void addEdge(struct Graph* graph, int src, int dest, int weight) {
         fprintf(stderr, "Erreur : addEdge avec IDs invalides (%d -> %d)\n", src, dest);
         return;
     }
+
+    if (strcmp(obtenir_nom_station(src), "Inconnu") == 0 ||
+        strcmp(obtenir_nom_station(dest), "Inconnu") == 0) {
+        return;
+        }
 
     if (edgeExists(graph, src, dest)) return;
 

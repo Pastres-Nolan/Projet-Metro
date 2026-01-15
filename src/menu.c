@@ -1,15 +1,15 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 #include "../include/menu.h"
 #include "../include/itineraire.h"
 #include "../include/graphe.h"
 #include "../include/station.h"
 #include "../include/tri_degre.h"
 
-#include <time.h>
-
 double time1, timedif;
+
 void vider_buffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
@@ -173,8 +173,8 @@ void gerer_menu_tri(struct Graph *graph) {
     vider_buffer();
 
     if (choix >= 1 && choix <= 3) {
-        time1 = (double) clock();            
-        time1 = time1 / CLOCKS_PER_SEC;      
+        time1 = (double) clock();
+        time1 = time1 / CLOCKS_PER_SEC;
         // On appelle le tri en fonction du choix de l'utilisateur
         executer_et_afficher_tri(graph, choix);
         timedif = ( ((double) clock()) / CLOCKS_PER_SEC) - time1;
