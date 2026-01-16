@@ -11,7 +11,7 @@ all: $(BUILD) $(NAME)
 
 # Règle de compilation finale
 $(NAME): $(OBJ)
-	$(CC) $(CFLAGS) -o $(BUILD)/$(NAME) $(OBJ)
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJ)
 
 # Compilation des .c vers .o
 $(BUILD)/%.o: src/%.c | $(BUILD)
@@ -25,7 +25,7 @@ clean:
 	rm -f $(OBJ)
 
 fclean: clean
-	rm -f $(BUILD)/$(NAME)
+	rm -f $(NAME)
 
 re: fclean all
 
