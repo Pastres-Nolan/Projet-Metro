@@ -64,8 +64,8 @@ struct Graph* charger_reseau(const char *nom_fichier) {
             strtok(copy, ";");
             char *id_str = strtok(NULL, ";");
             if (id_str) {
-                int id = atoi(id_str);
-                if (id > max_id) max_id = id;
+                long id = strtol(id_str, NULL, 10);
+                if (id > max_id) max_id = (int)id;
             }
             free(copy);
         }
@@ -91,7 +91,6 @@ struct Graph* charger_reseau(const char *nom_fichier) {
         fclose(file);
         return NULL;
     }
-    // for (int i = 0; i < HASH_SIZE; i++) table_hachage[i] = NULL;
 
     for (int i = 0; i < nb_stations_global; i++) {
         tableau_stations[i].id = i;
@@ -99,81 +98,148 @@ struct Graph* charger_reseau(const char *nom_fichier) {
     }
 
     // 3. Remplissage simultané (Graphe + Noms)
+    int lineno = 0;
     while (fgets(line, sizeof(line), file)) {
+        lineno++;
         if (line[0] == '#' || line[0] == '\n') continue;
-
-        char *line_copy = strdup(line);
-        if (!line_copy) {
-            perror("Erreur : strdup line_copy");
-            freeGraph(graph);
-            liberer_tout();
-            fclose(file);
-            return NULL;
+        if (strncmp(line, "STATION", 7) == 0) {
+            if (station_valide(line, lineno) < 0) {
+                fprintf(stderr, "Erreur : lors du chargement des stations\n");
+                freeGraph(graph);
+                liberer_tout();
+                fclose(file);
+                return NULL;
+            }
+        } else if (strncmp(line, "EDGE", 4) == 0) {
+            edge_valide (line, lineno, graph);
+        } else {
+            fprintf(stderr, "Avertissement ligne %d : ligne non reconnue\n", lineno);
         }
-        char *type = strtok(line_copy, ";");
-
-        if (type && strcmp(type, "STATION") == 0) {
-            char *id_str = strtok(NULL, ";");
-            char *nom = strtok(NULL, ";\n\r");
-
-            if (id_str && nom) {
-                int id = atoi(id_str);
-                if (id >= 0 && id < nb_stations_global) {
-                    if (tableau_stations[id].nom != NULL) {
-                        fprintf(stderr, "Avertissement : ID de station en double détecté (%d). L'ancien nom '%s' sera remplacé par '%s'.\n", id, tableau_stations[id].nom, nom);
-                        free(tableau_stations[id].nom);
-                    }
-                    char *tmp_nom = strdup(nom);
-                    if (!tmp_nom) {
-                        perror("Erreur : strdup nom");
-                        free(line_copy);
-                        freeGraph(graph);
-                        liberer_tout();
-                        fclose(file);
-                        return NULL;
-                    }
-
-                    HashNode *hn = malloc(sizeof(HashNode));
-                    if (!hn) {
-                        perror("Erreur : malloc HashNode");
-                        free(tmp_nom);
-                        free(line_copy);
-                        freeGraph(graph);
-                        liberer_tout();
-                        fclose(file);
-                        return NULL;
-                    }
-
-                    tableau_stations[id].id = id;
-                    tableau_stations[id].nom = tmp_nom;
-                    // Insertion dans la table de hachage
-                    int h = hash(tmp_nom);
-                    hn->station = &tableau_stations[id];
-                    hn->next = table_hachage[h];
-                    table_hachage[h] = hn;
-                }
-            } else {
-                fprintf(stderr, "Avertissement : Ligne STATION malformée ignorée.\n");
-            }
-
-        } else if (type && strcmp(type, "EDGE") == 0) {
-            char *s_str = strtok(NULL, ";");
-            char *d_str = strtok(NULL, ";");
-            char *t_str = strtok(NULL, ";\n\r");
-            if (s_str && strlen(s_str) > 0 &&
-                d_str && strlen(d_str) > 0 &&
-                t_str && strlen(t_str) > 0) {
-                addEdge(graph, atoi(s_str), atoi(d_str), atoi(t_str));
-            }
-            else {
-                fprintf(stderr, "Avertissement : Ligne EDGE malformée ignorée.\n");
-            }
-        }
-        free(line_copy);
     }
     fclose(file);
     return graph;
 }
+
+int station_valide (char *line, int lineno) {
+    strtok(line, ";");
+    char *id_str = strtok(NULL, ";");
+    char *nom = strtok(NULL, ";\n\r");
+
+    if (!id_str || !nom || strlen(nom) == 0) {
+        fprintf(stderr, "Avertissement ligne %d : Ligne STATION malformée ignorée\n", lineno);
+        return 1;
+    }
+
+    char *end;
+    long id_long = strtol(id_str, &end, 10);
+    if (*end != '\0' || id_long < 0 || id_long >= nb_stations_global) {
+        fprintf(stderr, "Avertissement ligne %d : ID STATION invalide (%s)\n", lineno, id_str);
+        return 1;
+    }
+
+    int id = (int)id_long;
+    if (tableau_stations[id].nom != NULL) {
+        fprintf(stderr, "Avertissement ligne %d : ID de station en double détecté (%d). L'ancien nom '%s' sera remplacé par '%s'.\n", lineno, id, tableau_stations[id].nom, nom);
+        free(tableau_stations[id].nom);
+    }
+
+    char *tmp_nom = strdup(nom);
+    if (!tmp_nom) {
+        perror("Erreur : strdup nom");
+        return -1;
+    }
+
+    HashNode *hn = malloc(sizeof(HashNode));
+    if (!hn) {
+        perror("Erreur : malloc HashNode");
+        free(tmp_nom);
+        return -1;
+    }
+
+    tableau_stations[id].id = id;
+    tableau_stations[id].nom = tmp_nom;
+    // Insertion dans la table de hachage
+    int h = hash(tmp_nom);
+    hn->station = &tableau_stations[id];
+    hn->next = table_hachage[h];
+    table_hachage[h] = hn;
+
+    // en cas de problème imprévu
+    if (!tableau_stations[id].nom || tableau_stations[id].id != id) {
+        fprintf(stderr, "Avertissement ligne %d : Problème inattendu avec STATION\n", lineno);
+        return 1;
+    }
+    return 0;
+}
+
+int edge_valide (char *line, int lineno, struct Graph* graph) {
+    strtok(line, ";");
+    char *s_str = strtok(NULL, ";");
+    char *d_str = strtok(NULL, ";");
+    char *t_str = strtok(NULL, ";\n\r");
+
+    if (!s_str || !d_str || !t_str || strlen(s_str) == 0 || strlen(d_str) == 0 || strlen(t_str) == 0) {
+        fprintf(stderr, "Avertissement ligne %d : Ligne EDGE malformée ignorée\n", lineno);
+        return 1;
+    }
+
+    char *end;
+    long src_long = strtol(s_str, &end, 10);
+    if (*end != '\0' || src_long < 0 || src_long >= nb_stations_global) {
+        fprintf(stderr, "Avertissement ligne %d : EDGE ignorée, src invalide (%s)\n", lineno, s_str);
+        return 1;
+    }
+    int src = (int)src_long;
+
+    long dest_long = strtol(d_str, &end, 10);
+    if (*end != '\0' || dest_long < 0 || dest_long >= nb_stations_global) {
+        fprintf(stderr, "Avertissement ligne %d : EDGE ignorée, dest invalide (%s)\n", lineno, d_str);
+        return 1;
+    }
+    int dest = (int)dest_long;
+
+    if (src == dest) {
+        fprintf(stderr, "Avertissement ligne %d : EDGE ignorée (%d -> %d) : source = destination\n", lineno, src, dest);
+        return 1;
+    }
+
+    if (!tableau_stations[src].nom || !tableau_stations[dest].nom) {
+        fprintf(stderr, "Avertissement ligne %d : EDGE ignorée (%d -> %d) : station inexistante\n", lineno, src, dest);
+        return 1;
+    }
+
+    float weight = strtof(t_str, &end);
+    if (end == t_str || *end != '\0') {
+        fprintf(stderr, "Avertissement ligne %d : EDGE ignorée (%d -> %d) : poids invalide (%s)\n", lineno, src, dest, t_str);
+        return 1;
+    }
+
+    if (weight <= 0.0f) {
+        fprintf(stderr, "Avertissement ligne %d : EDGE ignorée (%d -> %d) : poids nul ou négatif (%f)\n", lineno, src, dest, weight);
+        return 1;
+    }
+
+    if (edgeExists(graph, src, dest)) {
+        fprintf(stderr, "Avertissement ligne %d : EDGE ignorée car déjà présente (%d -> %d)\n", lineno, src, dest);
+        return 1; // edge ignorée
+    }
+
+    addEdge(graph, src, dest, weight);
+    // en cas de problème imprévu
+    if (src < 0 || dest < 0 || weight <= 0.0f) {
+        fprintf(stderr, "Avertissement ligne %d : Problème inattendu avec EDGE\n", lineno);
+        return 1;
+    }
+
+    return 0;
+}
+
+
+
+
+
+
+
 
 void liberer_tout() {
     // Libérer les noms des stations

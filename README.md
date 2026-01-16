@@ -5,12 +5,6 @@ des fonctionnalités d’analyse et de recherche d’itinéraires.
 ## Liste de tâches
 - Commenter le code.
 - Faire un README de qualité.
-- Compiler dans le dossier `builds` à créer si inexistant.
-- Rédiger le rapport, avec les réponses aux questions.
-- Fichier de tests ?
-
-
-
 
 ## Infos à mettre dans le README
 - Commandes Make :

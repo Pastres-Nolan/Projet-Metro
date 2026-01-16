@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "../include/station.h"
 #include "../include/graphe.h"
 
 // Function to create a new node
@@ -44,7 +43,7 @@ struct Graph* createGraph(int vertices, int isDirected) {
     return graph;
 }
 
-static int edgeExists(const struct Graph* graph, int src, int dest) {
+int edgeExists(const struct Graph* graph, int src, int dest) {
     struct Node* temp = graph->adjLists[src];
     while (temp) {
         if (temp->vertex == dest) return 1;
@@ -64,15 +63,14 @@ void addEdge(struct Graph* graph, int src, int dest, int weight) {
         return;
     }
 
-    if (strcmp(obtenir_nom_station(src), "Inconnu") == 0 ||
-        strcmp(obtenir_nom_station(dest), "Inconnu") == 0) {
-        return;
-        }
-
     if (edgeExists(graph, src, dest)) return;
 
     // Add edge from src to dest
     struct Node* newNode = createNode(dest, weight);
+    if (!newNode) {
+        perror("Erreur : malloc Node");
+        return;
+    }
     newNode->next = graph->adjLists[src];
     graph->adjLists[src] = newNode;
 
@@ -80,14 +78,17 @@ void addEdge(struct Graph* graph, int src, int dest, int weight) {
     if (!graph->isDirected) {
         if (!edgeExists(graph, dest, src)) {
             struct Node* newNodeRev = createNode(src, weight);
+            if (!newNodeRev) {
+                perror("Erreur : malloc Node");
+                return;
+            }
             newNodeRev->next = graph->adjLists[dest];
             graph->adjLists[dest] = newNodeRev;
         }
     }
 }
 
-/* Fonction utile pendant le développement
-// Function to print the adjacency list representation of the graph
+/* Fonction utile pour afficher la structure de la liste d'adjacence
 void printGraph(struct Graph* graph) {
     if (!graph) return;
     printf("Vertex:  Adjacency List\n");
@@ -105,7 +106,7 @@ void printGraph(struct Graph* graph) {
 }
 */
 
-int degreSortant(struct Graph* graph, int station) {
+int degreSortant(const struct Graph* graph, int station) {
     if (!graph || station < 0 || station >= graph->numVertices) {
         fprintf(stderr, "Erreur : degreSortant avec station invalide (%d)\n", station);
         return 0;

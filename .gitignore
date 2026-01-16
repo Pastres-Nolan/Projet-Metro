@@ -1,3 +1,6 @@
+# Dossier des binaires et de l'exécutable
+builds/
+
 # Binaires
 *.o
 

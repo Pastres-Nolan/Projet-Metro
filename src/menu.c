@@ -20,7 +20,7 @@ void menu(const char *nom_fichier){
     struct Graph *graph = charger_reseau(nom_fichier);
 
     if (!graph) {
-        fprintf(stderr, " Erreur : Impossible de charger le réseau.\n");
+        fprintf(stderr, " Erreur : Impossible de charger le réseau, fichier introuvable.\n");
         return;
     }
 
@@ -73,7 +73,7 @@ void menu(const char *nom_fichier){
 }
 
 
-void afficher_info_station(struct Graph *graph) {
+void afficher_info_station(const struct Graph *graph) {
     char input[100];
     char *endptr;
 
@@ -96,7 +96,7 @@ void afficher_info_station(struct Graph *graph) {
     } else printf("Erreur : Station '%s' inconnue.\n", input);
 }
 
-void afficher_voisins_station(struct Graph *graph) {
+void afficher_voisins_station(const struct Graph *graph) {
     char input[100];
     char *endptr;
 
@@ -130,7 +130,6 @@ void afficher_voisins_station(struct Graph *graph) {
 void calcul_chemin_minimal(struct Graph *graph) {
     char nom_dep[100], nom_arr[100];
     char *endptr;
-    int id_dep, id_arr;
 
     printf("Entrez l'ID ou le Nom de la station de départ : ");
     fgets(nom_dep, sizeof(nom_dep), stdin);
@@ -138,7 +137,7 @@ void calcul_chemin_minimal(struct Graph *graph) {
 
     // Détection ID ou Nom pour le départ
     long val_dep = strtol(nom_dep, &endptr, 10);
-    id_dep = (*endptr == '\0' && strlen(nom_dep) > 0) ? (int)val_dep : chercher_id_par_nom(nom_dep);
+    int id_dep = (*endptr == '\0' && strlen(nom_dep) > 0) ? (int)val_dep : chercher_id_par_nom(nom_dep);
 
     printf("Entrez l'ID ou le Nom de la station d'arrivée : ");
     fgets(nom_arr, sizeof(nom_arr), stdin);
@@ -146,7 +145,7 @@ void calcul_chemin_minimal(struct Graph *graph) {
 
     // Détection ID ou Nom pour l'arrivée
     long val_arr = strtol(nom_arr, &endptr, 10);
-    id_arr = (*endptr == '\0' && strlen(nom_arr) > 0) ? (int)val_arr : chercher_id_par_nom(nom_arr);
+    int id_arr = (*endptr == '\0' && strlen(nom_arr) > 0) ? (int)val_arr : chercher_id_par_nom(nom_arr);
 
 
     if (id_dep != -1 && id_arr != -1) {
