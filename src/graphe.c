@@ -53,7 +53,7 @@ int edgeExists(const struct Graph* graph, int src, int dest) {
 }
 
 // Function to add an edge to the graph
-void addEdge(struct Graph* graph, int src, int dest, int weight) {
+void addEdge(struct Graph* graph, int src, int dest, float weight_float) {
     if (!graph) {
         fprintf(stderr, "Erreur : graphe inexistant.\n");
         return;
@@ -64,6 +64,9 @@ void addEdge(struct Graph* graph, int src, int dest, int weight) {
     }
 
     if (edgeExists(graph, src, dest)) return;
+
+    int weight = (int)weight_float; // arrondi vers le bas
+    if (weight <= 0) weight = 1;    // sécurité : jamais zéro
 
     // Add edge from src to dest
     struct Node* newNode = createNode(dest, weight);
