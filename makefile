@@ -22,7 +22,7 @@ $(BUILD):
 	mkdir -p $(BUILD)
 
 clean:
-	rm -f $(OBJ)
+	rm -rf $(BUILD)
 
 fclean: clean
 	rm -f $(NAME)
